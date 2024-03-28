@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 
 public class SignInUI extends QuackstagramFunctions {
@@ -19,7 +20,7 @@ public class SignInUI extends QuackstagramFunctions {
     private JLabel lblPhoto;
     private User newUser;
     private JLabel error;
-
+    private Encryptor encryptor = new Encryptor();
 
 
     public SignInUI(NotificationsManager notificationManager) {
@@ -83,7 +84,14 @@ public class SignInUI extends QuackstagramFunctions {
 
         // Register button with black text
         btnSignIn = new JButton("Sign-In");
-        btnSignIn.addActionListener(event1 -> onSignInClicked(event1, notificationManager));
+        btnSignIn.addActionListener(event1 -> {
+            try {
+                onSignInClicked(event1, notificationManager);
+            } catch (NoSuchAlgorithmException e2) {
+                // TODO Auto-generated catch block
+                e2.printStackTrace();
+            }
+        });
         btnSignIn.setBackground(new Color(255, 90, 95)); // Use a red color that matches the mockup
         btnSignIn.setForeground(Color.BLACK); // Set the text color to black
         btnSignIn.setFocusPainted(false);
@@ -129,9 +137,9 @@ public class SignInUI extends QuackstagramFunctions {
 
     }
 
-    private void onSignInClicked(ActionEvent event, NotificationsManager notificationManager) {
+    private void onSignInClicked(ActionEvent event, NotificationsManager notificationManager) throws NoSuchAlgorithmException {
         String enteredUsername = txtUsername.getText();
-        String enteredPassword = txtPassword.getText();
+        String enteredPassword = encryptor.encryptPass(txtPassword.getText());
         System.out.println(enteredUsername+" <-> "+enteredPassword);
         if (verifyCredentials(enteredUsername, enteredPassword)) {
             System.out.println("It worked");

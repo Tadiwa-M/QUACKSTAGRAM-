@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
+
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -22,7 +24,7 @@ public class SignUpUI extends QuackstagramFunctions {
     private final String profilePhotoStoragePath = "img/storage/profile/";
     private JButton btnSignIn;
     private JLabel error;
-
+    private Encryptor encryptor = new Encryptor();
 
     public SignUpUI(NotificationsManager notificationManager) {
         setTitle("Quackstagram - Register");
@@ -93,7 +95,14 @@ public class SignUpUI extends QuackstagramFunctions {
 
         // Register button with black text
         btnRegister = new JButton("Register");
-        btnRegister.addActionListener(event -> onRegisterClicked(event, notificationManager));
+        btnRegister.addActionListener(event -> {
+            try {
+                onRegisterClicked(event, notificationManager);
+            } catch (NoSuchAlgorithmException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
         btnRegister.setBackground(new Color(255, 90, 95)); // Use a red color that matches the mockup
         btnRegister.setForeground(Color.BLACK); // Set the text color to black
         btnRegister.setFocusPainted(false);
@@ -123,9 +132,9 @@ public class SignUpUI extends QuackstagramFunctions {
     }
 
 
-    private void onRegisterClicked(ActionEvent event, NotificationsManager notificationManager) {
+    private void onRegisterClicked(ActionEvent event, NotificationsManager notificationManager) throws NoSuchAlgorithmException {
         String username = txtUsername.getText();
-        String password = txtPassword.getText();
+        String password = encryptor.encryptPass(txtPassword.getText());
         String bio = txtBio.getText();
 
         if (doesUsernameExist(username)) {
